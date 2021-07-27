@@ -1,0 +1,31 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Player List</h1>
+  {% if player_list %}
+  <ul>
+    {% for player in player_list %}
+      <h3>Player {{player.player_name}}</h3>
+      <li>
+        <a href="{{ player.get_absolute_url }}">Detail</a>
+        <a href="{% url 'role-vision' player.player_name%}">Vision</a>
+      </li>
+      <li>
+        <a href="{% url 'role-vision' player.player_name%}">Vision</a>
+      </li>
+      <li>
+        <a href="{% url 'player-update' player.pk %}">Update</a>
+      </li>
+      <li>
+        <a href="{% url 'player-delete' player.pk %}">Delete</a>
+      </li>
+    {% endfor %} 
+    <h1> </h1>
+    <li>
+        <a href="{% url 'player-create'%}">Create New Player</a>
+    </li>
+  </ul>
+  {% else %}
+    <p>There are no players now.</p>
+  {% endif %} 
+{% endblock %}

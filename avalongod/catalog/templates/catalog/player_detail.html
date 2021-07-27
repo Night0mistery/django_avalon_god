@@ -1,0 +1,27 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Player name: {{ player.player_name }}</h1>
+
+  <!-- author detail link not yet defined -->
+  <p><strong>role:</strong> {{ player.role }}</p>
+  <p><strong>id:</strong> {{ player.id }}</p>
+  <!--<p><strong>Genre:</strong> {{ book.genre.all|join:", " }}</p>-->
+
+  <div style="margin-left:20px;margin-top:20px">
+
+    <h4>Room:</h4>
+    <p><strong>room:</strong> <a href="{{ player.room.get_absolute_url }}">{{ player.room }}</a></p>
+    {% for copy in player.room.all %}
+      <hr>
+      <p class="{% if copy.status == 'WAIT' %}text-success{% elif copy.status == 'PLAY' %}text-danger{% else %}text-warning{% endif %}">
+        {{ copy.get_status_display }}
+      </p>
+      {% if copy.status != 'WAIT' %}
+        <p><strong>Player number:</strong> {{ copy.player_num }}</p>
+      {% endif %}
+      <p><strong>Max number:</strong> {{ copy.max_num  }}</p>
+      <p><strong>Room ID:</strong> {{ copy.room_id  }}</p>
+    {% endfor %}
+  </div>
+{% endblock %}

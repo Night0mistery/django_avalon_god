@@ -1,0 +1,26 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Room List</h1>
+  {% if room_list %}
+  <ul>
+    {% for room in room_list %}
+      <h3>Room: {{room.room_id}}</h3>
+      <li>
+        <a href="{{ room.get_absolute_url }}">Detail</a> (Status: {{room.status}})
+      </li>
+      <li>
+        <a href="{% url 'room-update' room.pk %}">Update</a> (Status: {{ room.status}})
+      </li>
+      <li>
+        <a href="{% url 'room-delete' room.pk %}">Delete</a> (Status: {{ room.status}})
+      </li>
+    {% endfor %}
+    <li>
+        <a href="{% url 'room-create'%}">Create New Room</a>
+    </li>
+  </ul>
+  {% else %}
+    <p>There are no rooms now.</p>
+  {% endif %} 
+{% endblock %}

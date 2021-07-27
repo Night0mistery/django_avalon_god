@@ -1,0 +1,15 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Vision for: {{ player.player_name }}</h1>
+  <p>User: {{ player.user }}</p>
+  <p>{% if player.is_Merlin %} class="text-danger"{% endif %}>Role: {{ player.role }}</p>
+
+  <form action="" method="post">
+    {% csrf_token %}
+    <table>
+    {{ form.as_table }}
+    </table>
+    <input type="submit" value="Submit">
+  </form>
+{% endblock %}

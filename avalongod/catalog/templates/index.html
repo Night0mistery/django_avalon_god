@@ -1,0 +1,17 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Avalon God</h1>
+  <p>Welcome to Avalon God, a website developed by <em>Nightmistery</em>!</p>
+  <h2>Records</h2>
+  <p>The Avalon God has the following record counts:</p>
+  <ul>
+    <li><strong>Players:</strong> {{ num_players }}</li>
+    <li><strong>Total Rooms:</strong> {{ num_rooms }}</li>
+    <li><strong>Rooms available:</strong> {{ num_rooms_wait }}</li>
+    <li><strong>Rules:</strong> {{ num_rules }}</li>
+  </ul>
+  <h1>Have fun!</h1>
+
+  <p>You have visited this page {{num_visits}} time{{num_visits|pluralize:'s'}}</p>
+{% endblock %}
