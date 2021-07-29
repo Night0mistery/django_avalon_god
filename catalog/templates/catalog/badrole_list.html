@@ -1,0 +1,21 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Your play for the evil side.</h1>
+    {% if player_list %}
+    <ul>
+      {% for player in player_list %}
+          {% if player.is_Morgana %}
+          <p>Morgana player:</p>
+          <p>Name: {{ player.player_name }} || Seat at {{ player.id }} </p>
+          {% else %}
+          <p>Other evil side players:</p>
+          <p>Name: {{ player.player_name }} || Seat at {{ player.id }} </p>
+          {% endif %}
+      {% endfor %}
+    </ul>
+
+    {% else %}
+      <p>There is no vision! Something went wrong!</p>
+    {% endif %}
+{% endblock %}

@@ -1,15 +1,28 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Vision for: {{ player.player_name }}</h1>
-  <p>User: {{ player.user }}</p>
-  <p>{% if player.is_Merlin %} class="text-danger"{% endif %}>Role: {{ player.role }}</p>
+    <h1>Your role is:</h1>
 
-  <form action="" method="post">
-    {% csrf_token %}
-    <table>
-    {{ form.as_table }}
-    </table>
-    <input type="submit" value="Submit">
-  </form>
+    {% if player_obj %}
+    <ul>
+
+      {% for player in player_list %}
+      <li class="{% if player.is_Merlin %}text-danger{% endif %}">
+        {% for p in player_list %}
+        {% if player.Merlin_Vision %}
+            <a href="{% url 'room-detail' player.room.pk %}">{{player.room}}</a> ({{ player.role}})
+            <p>{{ player.player_name }} -- {{ player.id }}</p>
+        {% endif %}
+        {% endfor %}
+
+      </li>
+      <li class="{% if player.is_Morgana %}text-danger{% endif %}">
+        <a href="{% url 'room-detail' player.room.pk %}">{{player.room}}</a> ({{ player.role}})
+      </li>
+      {% endfor %}
+    </ul>
+
+    {% else %}
+      <p>No role found. </p>
+    {% endif %}
 {% endblock %}

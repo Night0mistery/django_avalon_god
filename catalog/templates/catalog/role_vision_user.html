@@ -1,14 +1,38 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>Your role is:</h1>
 
     {% if player_list %}
     <ul>
 
       {% for player in player_list %}
-      <li class="{% if player.is_Merlin %}text-danger{% endif %}">
-        <a href="{% url 'room-detail' player.room.pk %}">{{player.room}}</a> ({{ player.role}})
+      <li>
+      <h2>In room:</h2>
+        <a href="{% url 'room-detail' player.room.pk %}">{{player.room}}</a>
+      <h5>Your role is: {{ player.role }}</h5>
+        {% if player.is_Merlin %}
+            <a href="{% url 'merlin-vision' %}">Your Vision</a>
+        {% elif player.is_Percival %}
+            <a href="{% url 'percival-vision' %}">Your Vision</a>
+        {% elif player.is_Morgana %}
+            <a href="{% url 'morgana-vision' %}">Your Vision</a>
+        {% elif player.is_Evil_but_Morgana %}
+            <a href="{% url 'badrole-vision' %}">Your Vision</a>
+        {% endif %}
+      </li>
+          <p> </p>
+      <li>
+        <h3>Your current vote: {{ player.vote }}</h3>
+        <p>Remember to change your vote each round.</p>
+        <a href="{% url 'player-vote' player.pk %}">Renew Your Vote</a>
+      </li>
+          <p> </p>
+      <li>
+        <h3>Your current action: {{ player.action }}</h3>
+        <p>OUT means you are not in the mission.</p>
+        <p>PASS means you want the mission to pass.</p>
+        <p>FAIL means you want the mission to fail.</p>
+        <a href="{% url 'player-action' player.pk %}">Renew Your Action</a>
       </li>
       {% endfor %}
     </ul>

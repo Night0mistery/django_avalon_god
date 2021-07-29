@@ -1,12 +1,10 @@
 from .models import Player, Room, Rule
 from django.views import generic
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-from .forms import RoleVisionForm
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
 
 def index(request):
@@ -15,10 +13,6 @@ def index(request):
     # Generate counts of some of the main objects
     num_players = Player.objects.all().count()
     num_rooms = Room.objects.all().count()
-
-    # Available Rooms (status = 'a')
-    num_rooms_wait = Room.objects.filter(status__iexact='WT').count()
-
     # The 'all()' is implied by default.
     num_rules = Rule.objects.count()
     num_visits = request.session.get('num_visits', 0)
@@ -27,7 +21,6 @@ def index(request):
     context = {
         'num_players': num_players,
         'num_rooms': num_rooms,
-        'num_rooms_wait': num_rooms_wait,
         'num_rules': num_rules,
         'num_visits': num_visits
     }
@@ -45,6 +38,37 @@ class PlayerListView(generic.ListView):
         return Player.objects.all()
         #return Player.objects.filter(role__iexact='ML')[:10]
 
+class MerlinVisionView(generic.ListView):
+    model = Player
+    paginate_by = 10
+    template_name = 'catalog/merlin_list.html'
+
+    def get_queryset(self):
+        return Player.objects.filter(role__in=['Morgana', 'Assassin', 'Minion', 'Oberon'])
+
+class PercivalVisionView(generic.ListView):
+    model = Player
+    paginate_by = 10
+    template_name = 'catalog/percival_list.html'
+
+    def get_queryset(self):
+        return Player.objects.filter(role__in=['Merlin', 'Morgana'])
+
+class MorganaVisionView(generic.ListView):
+    model = Player
+    paginate_by = 10
+    template_name = 'catalog/morgana_list.html'
+
+    def get_queryset(self):
+        return Player.objects.filter(role__in=['Mordred', 'Assassin', 'Minion'])
+
+class BadRoleVisionView(generic.ListView):
+    model = Player
+    paginate_by = 10
+    template_name = 'catalog/badrole_list.html'
+
+    def get_queryset(self):
+        return Player.objects.filter(role__in=['Morgana', 'Assassin', 'Minion', 'Mordred'])
 
 class RoomListView(generic.ListView):
     model = Room
@@ -53,24 +77,11 @@ class RoomListView(generic.ListView):
     def get_queryset(self):
         return Room.objects.all()
 
-    """
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get the context
-        context = super(BookListView, self).get_context_data(**kwargs)
-        # Create any data and add it to the context
-        context['some_data'] = 'This is just some data'
-        return context
-    """
-
-
 class PlayerDetailView(generic.DetailView):
     model = Player
 
 class RoomDetailView(generic.DetailView):
     model = Room
-
-
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 class RoleVisionUserListView(LoginRequiredMixin, generic.ListView):
     """Generic class-based view listing books on loan to current user."""
@@ -81,31 +92,6 @@ class RoleVisionUserListView(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         return Player.objects.filter(user=self.request.user)
 
-@login_required
-#@permission_required('catalog.room_holder')
-def RoleVision(request, pk):
-    player = get_object_or_404(Player, pk=pk)
-
-    # If this is a POST request then process the Form data
-    if request.method == 'POST':
-        # Create a form instance and populate it with data from the request (binding):
-        form = RoleVisionForm(request.POST)
-        if form.is_valid():
-            # process the data in form.cleaned_data as required (here we just write it to the model due_back field)
-            player.role = form.clean_role_vision
-            print(player.role)
-            player.save()
-            # redirect to a new URL:
-            return HttpResponseRedirect(reverse('index'))
-    else:
-        form = RoleVisionForm(initial={'role': 'Servant'})
-
-    context = {
-        'form': form,
-        'player': player,
-    }
-    return render(request, 'catalog/role_vision.html', context)
-
 class PlayerCreate(CreateView):
     model = Player
     fields = ['player_name', 'id', 'role', 'room', 'user']
@@ -113,7 +99,7 @@ class PlayerCreate(CreateView):
 
 class PlayerUpdate(UpdateView):
     model = Player
-    fields = ['player_name', 'id', 'role', 'room', 'user']# Not recommended (potential security issue if more fields added)
+    fields = ['player_name', 'id', 'room', 'user']# Not recommended (potential security issue if more fields added)
 
 class PlayerDelete(DeleteView):
     model = Player
@@ -121,14 +107,42 @@ class PlayerDelete(DeleteView):
 
 class RoomCreate(CreateView):
     model = Room
-    fields = ['room_id', 'player_num', 'Lady_in_the_lake', 'max_num', 'status']
-
+    fields = ['room_id', 'Lady_in_the_lake', 'max_num']
+    initial = {'Lady_in_the_lake': False}
 
 class RoomUpdate(UpdateView):
     model = Room
-    fields = ['room_id', 'player_num', 'Lady_in_the_lake', 'max_num', 'status']
-
+    fields = ['room_id', 'Lady_in_the_lake', 'max_num']
 
 class RoomDelete(DeleteView):
     model = Room
     success_url = reverse_lazy('rooms')
+
+class VoteUpdate(UpdateView):
+    model = Player
+    fields = ['vote']
+    success_url = reverse_lazy('my-role')
+
+class ActionUpdate(UpdateView):
+    model = Player
+    fields = ['action']
+    success_url = reverse_lazy('my-role')
+
+@login_required
+def mission(request, pk):
+    """View function for home page of site."""
+    room = get_object_or_404(Room, pk=pk)
+    # Generate counts of some of the main objects
+    room_id, num_players, num_mission, num_pass, num_fail = room.mission_result()
+    num_visits = request.session.get('num_visits', 0)
+    request.session['num_visits'] = num_visits + 1
+
+    context = {
+        'room_id': room_id,
+        'num_mission': num_mission,
+        'num_pass': num_pass,
+        'num_fail': num_fail,
+        'num_visits': num_visits
+    }
+
+    return render(request, 'mission.html', context=context)

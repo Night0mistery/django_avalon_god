@@ -1,0 +1,14 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Room {{ room_id }}</h1>
+  <h2>Mission Result:</h2>
+  <ul>
+    <li><strong>{{ num_mission }} players in the mission:</strong></li>
+    <li><strong> PASS vote: </strong> <font color="#00FF00">{{ num_pass }}</font></li>
+    <li><strong> FAIL vote: </strong> <font color="#FF0000">{{ num_fail }}</font></li>
+  </ul>
+  <h1>God bless the mission!!!</h1>
+
+  <p>You have visited this page {{num_visits}} time{{num_visits|pluralize:'s'}}</p>
+{% endblock %}

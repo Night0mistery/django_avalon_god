@@ -6,7 +6,7 @@ TIME_ZONE = 'Asia/Shanghai'
 
 @admin.register(Player)
 class PlayerAdmin(admin.ModelAdmin):
-    list_display = ('player_name', 'id', 'role', 'room', 'user')
+    list_display = ('player_name', 'id', 'role', 'room', 'user', 'vote', 'action')
     list_filter = ('player_name', 'role', 'room')
     fieldsets = (
         (None, {
@@ -15,6 +15,9 @@ class PlayerAdmin(admin.ModelAdmin):
         ('Availability', {
             'fields': ('room', 'user')
         }),
+        ('Vote and Action',{
+            'fields': ('vote', 'action')
+        })
     )
 
 
@@ -29,7 +32,7 @@ class RoomAdmin(admin.ModelAdmin):
 
 @admin.register(Rule)
 class RuleAdmin(admin.ModelAdmin):
-    list_display = ('rule_num', 'tasks')
+    list_display = ('rule_num', 'tasks', 'roles')
 
 """
 admin.site.register(Player, PlayerAdmin)

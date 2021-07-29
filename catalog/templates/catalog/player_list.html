@@ -5,13 +5,9 @@
   {% if player_list %}
   <ul>
     {% for player in player_list %}
-      <h3>Player {{player.player_name}}</h3>
+      <h4>Player: {{player.player_name}}</h4>
       <li>
         <a href="{{ player.get_absolute_url }}">Detail</a>
-        <a href="{% url 'role-vision' player.player_name%}">Vision</a>
-      </li>
-      <li>
-        <a href="{% url 'role-vision' player.player_name%}">Vision</a>
       </li>
       <li>
         <a href="{% url 'player-update' player.pk %}">Update</a>

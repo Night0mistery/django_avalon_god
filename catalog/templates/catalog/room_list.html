@@ -5,17 +5,29 @@
   {% if room_list %}
   <ul>
     {% for room in room_list %}
-      <h3>Room: {{room.room_id}}</h3>
+        {% if room.update_status %}
+      <h4>Room: {{room.room_id}}</h4>
+      <h4>Room players count: {{room.player_num}}(Status: {{room.status}})</h4>
+        {% endif %}
+        {% if room.role_distribute %}
+        <p>Each player should have a role now.</p>
+        <p>It`s time to play!</p>
+        {% endif %}
       <li>
-        <a href="{{ room.get_absolute_url }}">Detail</a> (Status: {{room.status}})
+        <a href="{{ room.get_absolute_url }}">Vote Result</a>
       </li>
       <li>
-        <a href="{% url 'room-update' room.pk %}">Update</a> (Status: {{ room.status}})
+        <a href="{% url 'mission' room.pk %}">Mission Result</a>
       </li>
       <li>
-        <a href="{% url 'room-delete' room.pk %}">Delete</a> (Status: {{ room.status}})
+        <a href="{% url 'room-update' room.pk %}">Update</a>
       </li>
+      <li>
+        <a href="{% url 'room-delete' room.pk %}">Delete</a>
+      </li>
+        <p></p>
     {% endfor %}
+    <p></p>
     <li>
         <a href="{% url 'room-create'%}">Create New Room</a>
     </li>

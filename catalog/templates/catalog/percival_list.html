@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Your role is: Percival</h1>
+    {% if player_list %}
+    <ul>
+    <h3>Merlin and Morgana: </h3>
+      {% for player in player_list %}
+          <p>Name: {{ player.player_name }} || Seat at {{ player.id }} </p>
+      {% endfor %}
+    </ul>
+
+    {% else %}
+      <p>There is no vision! Something went wrong!</p>
+    {% endif %}
+{% endblock %}

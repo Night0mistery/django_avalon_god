@@ -2,26 +2,20 @@
 
 {% block content %}
   <h1>Room id: {{ room.room_id }}</h1>
-
-  <p><strong>Player number:</strong> {{ room.player_num }}</p>
   <p><strong>Max player number:</strong> {{ room.max_num }}</p>
-  <p><strong>Lady in the lake:</strong> {{ room.lady_in_the_lake }}</p>
-  <p><strong>status:</strong> {{ room.status }}</p>
-  <!--<p><strong>Genre:</strong> {{ book.genre.all|join:", " }}</p>-->
+  <p><strong>Lady in the lake: <font size="3" color="#ff8c00">{{ room.Lady_in_the_lake|yesno:'YES,NO,UNKNOWN' }}</font></strong> </p>
+    <p><strong>status:</strong> <font size="3" color="#008b8b">{{ room.status }}</font></p>
 
   <div style="margin-left:20px;margin-top:20px">
-    <h4>Players:</h4>
+    <h4>Players' Vote:</h4>
 
     {% for copy in room.player_set.all %}
       <hr>
-      <p class="{% if copy.role == 'Merlin' %}text-success{% elif copy.role == 'Perival' %}text-danger{% else %}text-warning{% endif %}">
-        {{ copy.get_role_display }}
+      <p><strong>{{ copy.id }}.{{ copy.player_name }} Vote: </strong></p>
+      <p class="{% if copy.vote_agree %}text-success{% else %}text-danger{% endif %}">
+        {{ copy.get_vote_display }}
       </p>
-      {% if copy.role != 'Merlin' %}
-        <p><strong>Name:</strong> {{ copy.player_name }}</p>
-      {% endif %}
-      <p><strong>Seat:</strong> {{ copy.id  }}</p>
-      <p><strong>Room ID:</strong> {{ copy.room_id  }}</p>
+
     {% endfor %}
   </div>
 {% endblock %}
